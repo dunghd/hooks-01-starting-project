@@ -27,12 +27,9 @@ const Ingredients = () => {
     data,
     sendRequest,
     reqExtra,
-    reqIdentifier
+    reqIdentifier,
+    clear
   } = useHttp();
-
-  // const [userIngredients, setUserIngredients] = useState([]);
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [error, setError] = useState();
 
   useEffect(() => {
     if (!isLoading && !error && reqIdentifier === 'REMOVE_INGREDIENT') {
@@ -48,28 +45,10 @@ const Ingredients = () => {
   }, [data, reqExtra, reqIdentifier, isLoading, error]);
 
   const filteredIngredientsHandler = useCallback(filteredIngredients => {
-    // setUserIngredients(filteredIngredients);
     dispatch({ type: 'SET', ingredients: filteredIngredients });
   }, []);
 
   const addIngredientHandler = useCallback(ingredient => {
-    // // setIsLoading(true);
-    // dispatchHttp({ type: 'SEND' });
-    // fetch('https://react-hooks-update-3cb3b-default-rtdb.firebaseio.com/ingredients.json', {
-    //   method: 'POST',
-    //   body: JSON.stringify(ingredient),
-    //   headers: { 'Content-Type': 'application/json' }
-    // }).then(res => {
-    //   // setIsLoading(false);
-    //   dispatchHttp({ type: 'RESPONSE' });
-    //   return res.json().then(resData => {
-    //     // setUserIngredients(prevIngredients => [
-    //     //   ...prevIngredients, 
-    //     //   { id: resData.name,...ingredient }
-    //     // ]);
-    //     dispatch({ type: 'ADD', ingredient: { id: resData.name, ...ingredient } });
-    //   });
-    // });
     sendRequest(
       'https://react-hooks-update-3cb3b-default-rtdb.firebaseio.com/ingredients.json',
       'POST',
@@ -80,34 +59,13 @@ const Ingredients = () => {
   }, [sendRequest]);
 
   const removeIngredientHandler = useCallback(ingredientId => {
-    // setIsLoading(true);
-    // dispatchHttp({ type: 'SEND' });
-    // fetch(`https://react-hooks-update-3cb3b-default-rtdb.firebaseio.com/ingredients/${ingredientId}.json`, {
-    //   method: 'DELETE',
-    // }).then(res => {
-    //   // setIsLoading(false);
-    //   dispatchHttp({ type: 'RESPONSE' });
-    //   // setUserIngredients(prevIngredients =>
-    //   //   prevIngredients.filter(ingredient => ingredient.id !== ingredientId)
-    //   // );
-    //   dispatch({ type: 'DELETE', id: ingredientId })
-    // }).catch(err => {
-    //   // setError(err.message);
-    //   // setIsLoading(false);
-    //   dispatchHttp({ type: 'ERROR', errorMessage: err.message })
-    // });
     sendRequest(
-      `https://react-hooks-update-3cb3b-default-rtdb.firebaseio.com/ingredients/${ingredientId}.json`,
+      `https://react-hooks-update-3cb3b-default-rtdb.firebaseio.com/ingredients/${ingredientId}.son`,
       'DELETE',
       null,
       ingredientId,
       'REMOVE_INGREDIENT');
   }, [sendRequest]);
-
-  const clearError = useCallback(() => {
-    // setError(null);
-    // dispatchHttp({ type: 'CLEAR' });
-  }, []);
 
   const ingredientList = useMemo(() => {
     return (
@@ -119,7 +77,7 @@ const Ingredients = () => {
 
   return (
     <div className="App">
-      {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
+      {error && <ErrorModal onClose={clear}>{error}</ErrorModal>}
 
       <IngredientForm
         onAddIngredient={addIngredientHandler}
