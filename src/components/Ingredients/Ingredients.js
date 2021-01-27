@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useCallback } from 'react';
+import React, { useReducer, useEffect, useCallback, useMemo } from 'react';
 
 import IngredientForm from './IngredientForm';
 import IngredientList from './IngredientList'
@@ -52,7 +52,7 @@ const Ingredients = () => {
     dispatch({ type: 'SET', ingredients: filteredIngredients });
   }, []);
 
-  const addIngredientHandler = ingredient => {
+  const addIngredientHandler = useCallback(ingredient => {
     // setIsLoading(true);
     dispatchHttp({ type: 'SEND' });
     fetch('https://react-hooks-update-3cb3b-default-rtdb.firebaseio.com/ingredients.json', {
@@ -70,9 +70,9 @@ const Ingredients = () => {
         dispatch({ type: 'ADD', ingredient: { id: resData.name, ...ingredient } });
       });
     });
-  };
+  }, []);
 
-  const removeIngredientHandler = ingredientId => {
+  const removeIngredientHandler = useCallback(ingredientId => {
     // setIsLoading(true);
     dispatchHttp({ type: 'SEND' });
     fetch(`https://react-hooks-update-3cb3b-default-rtdb.firebaseio.com/ingredients/${ingredientId}.json`, {
@@ -89,12 +89,20 @@ const Ingredients = () => {
       // setIsLoading(false);
       dispatchHttp({ type: 'ERROR', errorMessage: err.message })
     });
-  };
+  }, []);
 
-  const clearError = () => {
+  const clearError = useCallback(() => {
     // setError(null);
     dispatchHttp({ type: 'CLEAR' });
-  };
+  }, []);
+
+  const ingredientList = useMemo(() => {
+    return (
+      <IngredientList
+        ingredients={userIngredients}
+        onRemoveItem={removeIngredientHandler} />
+    );
+  }, [userIngredients, removeIngredientHandler]);
 
   return (
     <div className="App">
@@ -106,9 +114,7 @@ const Ingredients = () => {
 
       <section>
         <Search onLoadIngredients={filteredIngredientsHandler} />
-        <IngredientList
-          ingredients={userIngredients}
-          onRemoveItem={removeIngredientHandler} />
+        {ingredientList}
       </section>
     </div>
   );
